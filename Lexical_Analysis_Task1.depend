@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1540557705 source:c:\users\mr_ho\desktop\new folder (2)\lexical_analysis_task1\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<ctype.h>
+
+1446667744 source:c:\users\mr_ho\desktop\new folder (2)\lexical_analysis_task1\main.cpp
+	<iostream>
+
