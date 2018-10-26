@@ -79,7 +79,7 @@ int main(){
     // Scope of Variables wanted ( VARIABLES MUST BE MEANINGFUL )
         /* " WRITE YOUR VARIABLES HERE " */
 
-        char ch, buffer[15], operators[] = "+-*/%=";
+        char ch, buffer[15], operators[] = "+-*/%=",special[]="[]{},.()\"\;:'?";
         FILE *fp;            // File Pointer to open the file needed..
         int i,bufferCnt = 0;   // Buffer Counter for concatenating chars and cutting them
 
@@ -121,7 +121,19 @@ int main(){
            }
 
         // Essam Code of handling Special Characters
-            /*  " WRITE YOUR CODE HERE "  */
+            for(i = 0; i < 13; ++i){
+               if(ch == special[i]){
+                   if (bufferCnt !=0){
+                       buffer[bufferCnt] = '\0';
+                       bufferCnt = 0;
+                       if(isKeyword(buffer) == 1)
+                           printf("%s is keyword\n", buffer);
+                       else
+                           printf("%s is indentifier\n", buffer);
+                   }
+               printf("%c is special character\n", ch);
+               }
+           }
 
         // Checking whether the character is an alphabet or a number
 
