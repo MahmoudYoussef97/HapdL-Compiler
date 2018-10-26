@@ -34,6 +34,46 @@ int isKeyword(char buffer[]){
     return flag;
 }
 
+// remove end of line
+void remove_end_of_line(char line[])
+{
+    int i=0;
+    while(1)
+    {
+        if (line[i]!='\n')
+            i++;
+        else
+            break;
+    }
+    line[i]='\0';
+}
+
+// check for extension we accept .hapd only
+void extention(char path[])
+{
+    int i = 0 ;
+    char check[5];
+    while(1)
+    {
+        if (path[i]=='.')
+        {
+            check[0]=path[i+1];
+            check[1]=path[i+2];
+            check[2]=path[i+3];
+            check[3]=path[i+4];
+            check[4]='\0';
+            if(strcmp(check,"hapd")!=0)
+            {
+                printf("error in your file extension, your file extension is %s ,please make sure to make it .hapd",check);
+                exit(0);
+            }
+            else
+
+                break;
+        }
+        i++;
+    }
+}
 int main(){
 
     // Scope of Variables wanted ( VARIABLES MUST BE MEANINGFUL )
@@ -46,9 +86,15 @@ int main(){
     // Nassar Code of reading the path of the file and checking it's extension
 
         /*  " WRITE YOUR CODE HERE && MODIFY THE ONE BELOW "  */
+        // Enter PATH of file which want to compile
 
+        char PATH[100];
+        printf("Enter Full PAth to your file\n");
+        fgets(PATH,100,stdin);
+        remove_end_of_line(PATH); // remove \n from input file
+        extention(PATH);
 
-        fp = fopen("test1.txt","r");    // open the file test1 on the folder of the code path
+        fp = fopen(PATH,"r");    // open the file test1 on the folder of the code path
 
         // checking whether the file opened or there's a problem
 
