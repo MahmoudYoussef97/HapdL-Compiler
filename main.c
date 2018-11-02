@@ -34,6 +34,7 @@ int isKeyword(char buffer[]){
     return flag;
 }
 
+
 // remove end of line
 void remove_end_of_line(char line[])
 {
@@ -68,6 +69,7 @@ void extention(char path[])
                 exit(0);
             }
             else
+
                 break;
         }
         i++;
@@ -92,8 +94,7 @@ int main(){
     // Scope of Variables wanted ( VARIABLES MUST BE MEANINGFUL )
         /* " WRITE YOUR VARIABLES HERE " */
 
-        //removed operators from here, it's now in the isOp func (Salim)
-        char ch, buffer[15],special[]="[]{},.()\":'?", op[2];
+        char ch, buffer[15], op[2],special[]="[]{},.()\"\;:'?";
         int first =0, second=0; // to catch the operators(Salim)
         FILE *fp;            // File Pointer to open the file needed..
         int i,bufferCnt = 0;   // Buffer Counter for concatenating chars and cutting them
@@ -104,7 +105,7 @@ int main(){
         // Enter PATH of file which want to compile
 
         char PATH[100];
-        printf("Enter Full Path to your file\n");
+        printf("Enter Full PAth to your file\n");
         fgets(PATH,100,stdin);
         remove_end_of_line(PATH); // remove \n from input file
         extention(PATH);
@@ -117,14 +118,14 @@ int main(){
             printf("error while opening the file\n");
             exit(0);
         }
-        int x = 2;
+
 
 
     while((ch = fgetc(fp)) != EOF){         // While the file does not reach its end
 
          // Salim Code of handling Operators and handling identifiers before and after Ex: 1+2+3=5;
             /*  " WRITE YOUR CODE HERE "  */
-    	first = isOp(ch);
+        first = isOp(ch);
         if(first == 1){
             op[0] = ch;
             char ch2 = fgetc(fp);
@@ -145,10 +146,20 @@ int main(){
                 printf("%c is the single operator\n", op[0]); // here we have the double operator
             }
         }
-
         // Youssef Code of handling Assigning value after equality
             /*  " WRITE YOUR CODE HERE "  */
 
+
+        // Checking whether the character is an operator or not
+        // AA if op >> starting new buffer 
+           /*for(i = 0; i < 6; ++i){
+               if(ch == operators[i]){
+                   printf("%c is operator\n", ch);
+                   if (bufferCnt !=0){
+                       buffer[bufferCnt] = '\0';
+                       bufferCnt = 0;}
+                     }
+           }*/
 
         // Essam Code of handling Special Characters
             for(i = 0; i < 13; ++i){
@@ -171,8 +182,9 @@ int main(){
                buffer[bufferCnt++] = ch;
            }
 
-        // Ammar Code of handling Spaces
-            /*  " WRITE YOUR CODE HERE "  */
+        // Ammar Code of handling Spaces>>>:( 
+            // AA check if buffer is op or sepcial char >> starting new buffer .
+
 
         // Checking the Spaces
 
