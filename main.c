@@ -9,13 +9,16 @@ int isKeyword(char buffer[]){
 
     // Samy Code of manipulating the keywords or adding some of them below .. ( PYTHON )
 
+        /*  " WRITE YOUR CODE HERE / MODIFY THE ONE BELOW */
 
-char keywords[33][10] = {"False","class","finally","is","return","None","continue",
-                            "for","lambda","try","and","del","global","not","with",
-                            "True","def","from","nonlocal","while","as","elif",
-                            "if","or","yield","assert","else","import",
-                            "pass","break","except","in","raise"};
 
+    // Reserved Keywords in C Language
+
+    char keywords[32][10] = {"auto","break","case","char","const","continue","default",
+                            "do","double","else","enum","extern","float","for","goto",
+                            "if","int","long","register","return","short","signed",
+                            "sizeof","static","struct","switch","typedef","union",
+                            "unsigned","void","volatile","while"};
 
     int i,flag = 0;   // the return value which would let us know if it's a reserved keyword or not
 
@@ -30,6 +33,7 @@ char keywords[33][10] = {"False","class","finally","is","return","None","continu
 
     return flag;
 }
+
 
 // remove end of line
 void remove_end_of_line(char line[])
@@ -61,7 +65,7 @@ void extention(char path[])
             check[4]='\0';
             if(strcmp(check,"hapd")!=0)
             {
-                printf("error in your file extension, your file extension is %s ,please make sure to make it .hapd\n",check);
+                printf("error in your file extension, your file extension is %s ,please make sure to make it .hapd",check);
                 exit(0);
             }
             else
@@ -76,7 +80,7 @@ int main(){
     // Scope of Variables wanted ( VARIABLES MUST BE MEANINGFUL )
         /* " WRITE YOUR VARIABLES HERE " */
 
-        char ch, buffer[15], operators[] = "+-*/%=",special[]="[]{},.()\\;:'?";
+        char ch, buffer[15], operators[] = "+-*/%=",special[]="[]{},.()\"\;:'?";
         FILE *fp;            // File Pointer to open the file needed..
         int i,bufferCnt = 0;   // Buffer Counter for concatenating chars and cutting them
 
@@ -112,9 +116,14 @@ int main(){
 
 
         // Checking whether the character is an operator or not
+        // AA if op >> starting new buffer 
            for(i = 0; i < 6; ++i){
-               if(ch == operators[i])
+               if(ch == operators[i]){
                    printf("%c is operator\n", ch);
+                   if (bufferCnt !=0){
+                       buffer[bufferCnt] = '\0';
+                       bufferCnt = 0;}
+                     }
            }
 
         // Essam Code of handling Special Characters
@@ -138,8 +147,9 @@ int main(){
                buffer[bufferCnt++] = ch;
            }
 
-        // Ammar Code of handling Spaces
-            /*  " WRITE YOUR CODE HERE "  */
+        // Ammar Code of handling Spaces>>>:( 
+            // AA check if buffer is op or sepcial char >> starting new buffer .
+
 
         // Checking the Spaces
 
