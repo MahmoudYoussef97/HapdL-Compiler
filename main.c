@@ -9,16 +9,11 @@ int isKeyword(char buffer[]){
 
     // Samy Code of manipulating the keywords or adding some of them below .. ( PYTHON )
 
-        /*  " WRITE YOUR CODE HERE / MODIFY THE ONE BELOW */
-
-
-    // Reserved Keywords in C Language
-
-    char keywords[32][10] = {"auto","break","case","char","const","continue","default",
-                            "do","double","else","enum","extern","float","for","goto",
-                            "if","int","long","register","return","short","signed",
-                            "sizeof","static","struct","switch","typedef","union",
-                            "unsigned","void","volatile","while"};
+    char keywords[33][10] = {"False","class","finally","is","return","None","continue",
+                            "for","lambda","try","and","del","global","not","with",
+                            "True","def","from","nonlocal","while","as","elif",
+                            "if","or","yield","assert","else","import",
+                            "pass","break","except","in","raise"};
 
     int i,flag = 0;   // the return value which would let us know if it's a reserved keyword or not
 
@@ -65,7 +60,7 @@ void extention(char path[])
             check[4]='\0';
             if(strcmp(check,"hapd")!=0)
             {
-                printf("error in your file extension, your file extension is %s ,please make sure to make it .hapd",check);
+                printf("error in your file extension, your file extension is %s ,please make sure to make it .hapd\n",check);
                 exit(0);
             }
             else
