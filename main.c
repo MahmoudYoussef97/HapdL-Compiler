@@ -126,7 +126,7 @@ int main(){
             char ch2 = fgetc(fp);
             second = isOp(ch2);
             if(second == 1){
-                if((ch2 == '=' && (ch == '+' || ch == '-' || ch == '<' || ch == '>' )) || (ch2 == '+' && ch == '+') || (ch2 == '-' && ch == '-')){
+                if((ch2 == '=' && (ch == '+' || ch == '-' || ch == '<' || ch == '>' )) || (ch2 == '=' && ch == '=') || (ch2 == '+' && ch == '+') || (ch2 == '-' && ch == '-')){
                     op[1] = ch2;
                     printf("%c%c is the double operator\n", op[0], op[1]); // here we have the double operators     
                 }
