@@ -124,32 +124,19 @@ void init_io(FILE **fp, FILE *std, const char mode[], const char fn[]) {
     }
 }
 
-int main(int argc, char *argv[])
-{
-
-    // Scope of Variables wanted ( VARIABLES MUST BE MEANINGFUL )
-    /* " WRITE YOUR VARIABLES HERE " */
-    char ch, buffer[15], op[2], special[] = "[]{},.()\"\;:'?";
-    int first = 0, second = 0; // to catch the operators(Salim)
-    int i, bufferCnt = 0;      // Buffer Counter for concatenating chars and cutting them
-
-    // get data from stdin or path or from argv
-    init_io(&source_fp, stdin,  "r",  argc > 1 ? argv[1] : "");
+void checkOperators (char *ch){
     
-    while ((ch = fgetc(source_fp)) != EOF)
-    { // While the file does not reach its end
-
-        // Salim Code of handling Operators and handling identifiers before and after Ex: 1+2+3=5;
-        /*  " WRITE YOUR CODE HERE "  */
-        first = isOp(ch);
-        if (first == 1)
+    char op[2];
+    int first = 0, second = 0; // to catch the operators(Salim)
+    first = isOp(*ch);
+        if (first == 1)   //first char is operator
         {
-            op[0] = ch;
+            op[0] = *ch;
             char ch2 = fgetc(source_fp);
             second = isOp(ch2);
             if (second == 1)
             {
-                if ((ch2 == '=' && (ch == '+' || ch == '-' || ch == '<' || ch == '>')) || (ch2 == '=' && ch == '=') || (ch2 == '+' && ch == '+') || (ch2 == '-' && ch == '-'))
+                if ((ch2 == '=' && (*ch == '+' || *ch == '-' || *ch == '<' || *ch == '>')) || (ch2 == '=' && *ch == '=') || (ch2 == '+' && *ch == '+') || (ch2 == '-' && *ch == '-'))
                 {
                     op[1] = ch2;
                     printf("%c%c is the double operator\n", op[0], op[1]); // here we have the double operators
@@ -163,72 +150,97 @@ int main(int argc, char *argv[])
             else
             {
                 op[1] = '\0';
-                ch = ch2;
+                *ch = ch2;
                 printf("%c is the single operator\n", op[0]); // here we have the double operator
             }
         }
-        // Youssef Code of handling Assigning value after equality
-        /*  " WRITE YOUR CODE HERE "  */
 
-        // Checking whether the character is an operator or not
-        // AA if op >> starting new buffer
-        /*for(i = 0; i < 6; ++i){
-               if(ch == operators[i]){
-                   printf("%c is operator\n", ch);
-                   if (bufferCnt !=0){
-                       buffer[bufferCnt] = '\0';
-                       bufferCnt = 0;}
-                     }
-           }*/
+}
 
-        // Essam Code of handling Special Characters
-        for (i = 0; i < 13; ++i)
-        {
-            if (ch == special[i])
-            {
-                if (bufferCnt != 0)
-                {
-                    buffer[bufferCnt] = '\0';
-                    bufferCnt = 0;
-                    if (isKeyword(buffer) == 1)
-                        printf("%s is keyword\n", buffer);
-                    else
-                        printf("%s is indentifier\n", buffer);
-                }
-                printf("%c is special character\n", ch);
-            }
-        }
 
-        // Checking whether the character is an alphabet or a number
+void openBuffer(int *bufferCnt,char buffer[]){
+    buffer[*bufferCnt] = '\0';
+    *bufferCnt = 0;
+}
 
-        if (isalnum(ch))
-        {
-            buffer[bufferCnt++] = ch;
-        }
-
-        // Ammar Code of handling Spaces>>>:(
-        // AA check if buffer is op or sepcial char >> starting new buffer .
-
-        // Checking the Spaces
-
-        else if ((ch == ' ' || ch == '\n') && (bufferCnt != 0))
-        {
-            buffer[bufferCnt] = '\0';
-            bufferCnt = 0;
-
-            if (isKeyword(buffer) == 1)
-                printf("%s is keyword\n", buffer);
-            else
-                printf("%s is indentifier\n", buffer);
-        }
-    }
-
-    // Checking keywords
-
+void checkKwdOrIdnt(char buffer){
     if (isKeyword(buffer) == 1)
         printf("%s is keyword\n", buffer);
     else
         printf("%s is indentifier\n", buffer);
+}
+
+void checkSpecial(char *ch, int *bufferCnt, char buffer){
+    int i;
+    char special[] = "[]{},.()\"\;:'?";
+    for (i = 0; i < 13; ++i)
+    {
+        if (ch == special[i])
+        {
+            if (*bufferCnt != 0)
+            {
+                openBuffer(&bufferCnt, buffer);
+                checkKwdOrIdnt(buffer);
+
+            }
+            printf("%c is special character\n", ch);
+        }
+    }
+}
+
+void buildBuffer(char *ch, int *bufferCnt, char buffer){
+    if (isalnum(*ch))
+    {
+        buffer[*++bufferCnt] = *ch;
+    }
+}
+
+void check_all(){
+    char ch;
+    char  buffer[15]; 
+    int i, bufferCnt = 0;      // Buffer Counter for concatenating chars and cutting them
+    while ((ch = fgetc(source_fp)) != EOF)
+    { // While the file does not reach its end
+
+        // Salim Code of handling Operators and handling identifiers before and after Ex: 1+2+3=5;
+        checkOperators(&ch);
+        // Youssef Code of handling Assigning value after equality
+        
+        // Essam Code of handling Special Characters
+        checkSpecial(&ch, &bufferCnt, buffer);        
+
+        // Checking whether the character is an alphabet or a number
+        buildBuffer(&ch, &bufferCnt, buffer);
+
+        if ((ch == ' ' || ch == '\n') && (bufferCnt != 0))
+        {
+            openBuffer(&bufferCnt, buffer );
+            checkKwdOrIdnt(buffer);
+        }
+        
+    }
+
+}
+
+
+
+int main(int argc, char *argv[])
+{
+
+    // Scope of Variables wanted ( VARIABLES MUST BE MEANINGFUL )
+    /* " WRITE YOUR VARIABLES HERE " */
+
+
+    // get data from stdin or path or from argv
+    init_io(&source_fp, stdin,  "r",  argc > 1 ? argv[1] : "");
+    
+    check_all();
+    // Checking keywords
+
+    // if (isKeyword(buffer) == 1)
+    //     printf("%s is keyword\n", buffer);
+    // else
+    //     printf("%s is indentifier\n", buffer);
 
     fclose(source_fp); // close the file
 
