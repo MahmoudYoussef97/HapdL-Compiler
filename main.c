@@ -4,6 +4,7 @@
 #include <ctype.h>
 
 // Function for checking whether it's a keyword or not !
+static FILE *source_fp, *dest_fp;
 
 int isKeyword(char buffer[])
 {
@@ -88,39 +89,54 @@ int isOp(char c)
 }
 ///////////////////////////////
 
-int main()
-{
-
-    // Scope of Variables wanted ( VARIABLES MUST BE MEANINGFUL )
-    /* " WRITE YOUR VARIABLES HERE " */
-
-    char ch, buffer[15], op[2], special[] = "[]{},.()\"\;:'?";
-    int first = 0, second = 0; // to catch the operators(Salim)
-    FILE *fp;                  // File Pointer to open the file needed..
-    int i, bufferCnt = 0;      // Buffer Counter for concatenating chars and cutting them
-
+char* return_path(){
     // Nassar Code of reading the path of the file and checking it's extension
-
+    
     /*  " WRITE YOUR CODE HERE && MODIFY THE ONE BELOW "  */
-    // Enter PATH of file which want to compile
 
+    FILE *fp;
+    // Enter PATH of file which want to compile
     char PATH[100];
     printf("Enter Full PAth to your file\n");
     fgets(PATH, 100, stdin);
     remove_end_of_line(PATH); // remove \n from input file
     extention(PATH);
+    
 
-    fp = fopen(PATH, "r"); // open the file test1 on the folder of the code path
+    return PATH;
+}
 
-    // checking whether the file opened or there's a problem
-
-    if (fp == NULL)
-    {
-        printf("error while opening the file\n");
-        exit(0);
+void init_io(FILE **fp, FILE *std, const char mode[], const char fn[]) {
+    if (fn[0] == '\0')
+        *fp = std;
+    else if(fn[0] == '-' && fn[1] == 'p'){
+        //from a certain given path
+        fn = return_path();                  // File Pointer to open the file needed..
+        if ((*fp = fopen(fn, mode)) == NULL)
+            printf("Failed to open file");
     }
 
-    while ((ch = fgetc(fp)) != EOF)
+    else{
+        //from argv (in the same folder)
+        extention(fn);
+        if ((*fp = fopen(fn, mode)) == NULL)
+            printf("Failed to open file");
+    }
+}
+
+int main(int argc, char *argv[])
+{
+
+    // Scope of Variables wanted ( VARIABLES MUST BE MEANINGFUL )
+    /* " WRITE YOUR VARIABLES HERE " */
+    char ch, buffer[15], op[2], special[] = "[]{},.()\"\;:'?";
+    int first = 0, second = 0; // to catch the operators(Salim)
+    int i, bufferCnt = 0;      // Buffer Counter for concatenating chars and cutting them
+
+    // get data from stdin or path or from argv
+    init_io(&source_fp, stdin,  "r",  argc > 1 ? argv[1] : "");
+    
+    while ((ch = fgetc(source_fp)) != EOF)
     { // While the file does not reach its end
 
         // Salim Code of handling Operators and handling identifiers before and after Ex: 1+2+3=5;
@@ -129,7 +145,7 @@ int main()
         if (first == 1)
         {
             op[0] = ch;
-            char ch2 = fgetc(fp);
+            char ch2 = fgetc(source_fp);
             second = isOp(ch2);
             if (second == 1)
             {
@@ -214,7 +230,7 @@ int main()
     else
         printf("%s is indentifier\n", buffer);
 
-    fclose(fp); // close the file
+    fclose(source_fp); // close the file
 
     return 0;
 }
