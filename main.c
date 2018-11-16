@@ -6,8 +6,17 @@
 // Function for checking whether it's a keyword or not !
 static FILE *source_fp, *dest_fp;
 
-int isKeyword(char buffer[])
-{
+struct pair {
+    char* label;
+    char* value;
+};
+
+struct pair pairs[50][100];
+int k=0,l=0; // for the array of structs (pairs)
+int bufferCnt = 0; // Buffer Counter for concatenating chars and cutting them
+
+
+int isKeyword(char buffer[]){
 
     // Samy Code of manipulating the keywords or adding some of them below .. ( PYTHON )
 
@@ -34,8 +43,7 @@ int isKeyword(char buffer[])
 }
 
 // remove end of line
-void remove_end_of_line(char line[])
-{
+void remove_end_of_line(char line[]){
     int i = 0;
     while (1)
     {
@@ -48,8 +56,7 @@ void remove_end_of_line(char line[])
 }
 
 // check for extension we accept .hapd only
-void extention(char path[])
-{
+void extention(const char path[]){
     int i = 0;
     char check[5];
     while (1)
@@ -75,9 +82,7 @@ void extention(char path[])
 }
 
 /* added for operators (Salim) */
-///////////////////////////////
-int isOp(char c)
-{
+int isOp(char c){
     char operators[] = "+-*/%=><!";
     int i = 0;
     for (i = 0; i < 9; i++)
@@ -87,7 +92,6 @@ int isOp(char c)
     }
     return -1;
 }
-///////////////////////////////
 
 char* return_path(){
     // Nassar Code of reading the path of the file and checking it's extension
@@ -126,8 +130,8 @@ void init_io(FILE **fp, FILE *std, const char mode[], const char fn[]) {
 
 void checkOperators (char *ch){
     
-    char op[2];
-    int first = 0, second = 0; // to catch the operators(Salim)
+    char* op;
+    int first = 0, second = 0; // to catch the operators
     first = isOp(*ch);
         if (first == 1)   //first char is operator
         {
@@ -139,108 +143,116 @@ void checkOperators (char *ch){
                 if ((ch2 == '=' && (*ch == '+' || *ch == '-' || *ch == '<' || *ch == '>')) || (ch2 == '=' && *ch == '=') || (ch2 == '+' && *ch == '+') || (ch2 == '-' && *ch == '-'))
                 {
                     op[1] = ch2;
-                    printf("%c%c is the double operator\n", op[0], op[1]); // here we have the double operators
+                    pairs[k][l] = (struct pair){"double operator",op };  /// check with strcat()
+                    l++;
+                    printf("%s is the double operator\n", op); // here we have the double operators
                 }
                 else
                 {
-                    printf("There is no such operator as: %c%c\n", op[0], ch2);
-                    op[0] = 'E';
+                    printf("There is no such operator as: %s %c\n", op, ch2);
                 }
             }
             else
             {
                 op[1] = '\0';
                 *ch = ch2;
-                printf("%c is the single operator\n", op[0]); // here we have the double operator
+            	pairs[k][l] = (struct pair){"single operator",ch}; 
+            	l++;
+                printf("%s is the single operator\n", ch); // here we have the double operator
             }
         }
-
 }
 
-
-void openBuffer(int *bufferCnt,char buffer[]){
-    buffer[*bufferCnt] = '\0';
-    *bufferCnt = 0;
+void openBuffer(char buffer[]){
+    buffer[bufferCnt] = '\0';
+    bufferCnt = 0;
 }
 
-void checkKwdOrIdnt(char buffer){
-    if (isKeyword(buffer) == 1)
+void checkKwdOrIdnt(char buffer[]){
+    if (isKeyword(buffer) == 1){
+    	pairs[k][l] = (struct pair){"keyword",buffer };
+        l++;
         printf("%s is keyword\n", buffer);
-    else
+    }
+    else{
+    	pairs[k][l] = (struct pair){"keyword",buffer };
+        l++;
         printf("%s is indentifier\n", buffer);
+    }
 }
 
-void checkSpecial(char *ch, int *bufferCnt, char buffer){
+void checkSpecial(char *ch, char buffer[]){
     int i;
     char special[] = "[]{},.()\"\;:'?";
     for (i = 0; i < 13; ++i)
     {
-        if (ch == special[i])
+        if (*ch == special[i])
         {
-            if (*bufferCnt != 0)
+            if (bufferCnt != 0)
             {
-                openBuffer(&bufferCnt, buffer);
+                openBuffer(buffer);
                 checkKwdOrIdnt(buffer);
 
             }
-            printf("%c is special character\n", ch);
+            pairs[k][l] = (struct pair){"special character",ch };
+            l++;
+            printf("%c is special character\n", *ch);
         }
     }
 }
 
-void buildBuffer(char *ch, int *bufferCnt, char buffer){
+void buildBuffer(char *ch, char buffer[]){
     if (isalnum(*ch))
     {
-        buffer[*++bufferCnt] = *ch;
+        buffer[++bufferCnt] = *ch;
     }
 }
 
 void check_all(){
     char ch;
     char  buffer[15]; 
-    int i, bufferCnt = 0;      // Buffer Counter for concatenating chars and cutting them
+    int i;      
     while ((ch = fgetc(source_fp)) != EOF)
     { // While the file does not reach its end
-
         // Salim Code of handling Operators and handling identifiers before and after Ex: 1+2+3=5;
+        // printf("char is %c\n", ch);
+
         checkOperators(&ch);
         // Youssef Code of handling Assigning value after equality
-        
         // Essam Code of handling Special Characters
-        checkSpecial(&ch, &bufferCnt, buffer);        
+        checkSpecial(&ch, buffer);        
 
         // Checking whether the character is an alphabet or a number
-        buildBuffer(&ch, &bufferCnt, buffer);
+        buildBuffer(&ch, buffer);
 
         if ((ch == ' ' || ch == '\n') && (bufferCnt != 0))
         {
-            openBuffer(&bufferCnt, buffer );
+            openBuffer(buffer );
             checkKwdOrIdnt(buffer);
+        }
+        if (isKeyword(buffer) == 1)
+        printf("%s is keywordsyword\n", buffer);
+    	else
+        printf("%s is indentifier\n", buffer);
+
+        if(ch=='\n'){
+        	k++;
+        	l++;
+	    	pairs[k][l] = (struct pair){'\0', '\0'}; 
+	    	l=0;
         }
         
     }
-
+    // for (i = 0; i < sizeof(pairs) / sizeof(pairs[0]); i++)
+    // 	printf("%s: %s\n",  pairs[i][0].label, pairs[i][0].value);
 }
 
-
-
-int main(int argc, char *argv[])
-{
-
-    // Scope of Variables wanted ( VARIABLES MUST BE MEANINGFUL )
-    /* " WRITE YOUR VARIABLES HERE " */
-
+int main(int argc, char *argv[]){
 
     // get data from stdin or path or from argv
     init_io(&source_fp, stdin,  "r",  argc > 1 ? argv[1] : "");
     
     check_all();
-    // Checking keywords
-
-    // if (isKeyword(buffer) == 1)
-    //     printf("%s is keyword\n", buffer);
-    // else
-    //     printf("%s is indentifier\n", buffer);
 
     fclose(source_fp); // close the file
 
