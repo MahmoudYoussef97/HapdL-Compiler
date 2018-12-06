@@ -8,13 +8,12 @@ static FILE *source_fp, *dest_fp;
 
 struct pair {
     char* label;
-    char* value;
+    char value[20]; // maximum number of accepted word length is 20
 };
 
-struct pair pairs[50][100];
+struct pair pairs[5][10];
 int k=0,l=0; // for the array of structs (pairs)
 int bufferCnt = 0; // Buffer Counter for concatenating chars and cutting them
-
 
 int isKeyword(char* buffer){
 
@@ -130,17 +129,18 @@ void init_io(FILE **fp, FILE *std, const char mode[], const char fn[]) {
 void checkKwdOrIdnt(char* buffer){
     if (buffer[0] == '\0'){}
     else if (isKeyword(buffer) == 1){
-    	pairs[k][l] = (struct pair){"keyword",buffer};
+    	pairs[k][l] = (struct pair){"keyword","\0"};
+        strcpy(pairs[k][l].value, buffer);
         l++;
         printf("%s is keyword\n", buffer);
     }
     else if (isKeyword(buffer) == 0){
-    	pairs[k][l] = (struct pair){"identifier",buffer};
+    	pairs[k][l] = (struct pair){"identifier","\0"};
+        strcpy(pairs[k][l].value, buffer);
         l++;
         printf("%s is indentifier\n", buffer);
     }
-
-    }
+}
 
 void checkOperators (char *ch, char* buffer){
     
@@ -165,9 +165,12 @@ void checkOperators (char *ch, char* buffer){
                     char op[2];
                     op[0] = *ch;
                     op[1] = ch2;
-                    pairs[k][l] = (struct pair){"double operator",op};  /// check with strcat()
+                    pairs[k][l] = (struct pair){"double operator",""};  /// check with strcat()
+                    strcpy(pairs[k][l].value, op);
+                    // label[l] = "double operator";
+                    // strcpy(value[l],op);
                     l++;
-                    printf("%s is the double operator\n", op); // here we have the double operators
+                    printf("%c%c is the double operator\n", *ch, ch2); // here we have the double operators
                 }
                 else
                 {
@@ -178,7 +181,7 @@ void checkOperators (char *ch, char* buffer){
         }
         else
         {
-        	pairs[k][l] = (struct pair){"single operator",ch}; 
+        	pairs[k][l] = (struct pair){"single operator",*ch}; 
         	l++;
             printf("%c is the single operator\n", *ch); // here we have the double operator
             *ch = ch2;
@@ -200,7 +203,7 @@ void checkSpecial(char *ch, char* buffer){
                 checkKwdOrIdnt(buffer);
 
             }
-            pairs[k][l] = (struct pair){"special character",ch };
+            pairs[k][l] = (struct pair){"special character",*ch};
             l++;
             printf("%c is special character\n", *ch);
         }
@@ -213,17 +216,15 @@ void check_all(){
     char* buffer; 
     int i;      
     while ((ch = fgetc(source_fp)) != EOF)
-    { // While the file does not reach its end
-        // Salim Code of handling Operators and handling identifiers before and after Ex: 1+2+3=5;
+    { 
+
         checkOperators(&ch, buffer);
 
-        // Essam Code of handling Special Characters
         checkSpecial(&ch, buffer);        
 
-        // Checking whether the character is an alphabet or a number
         if (isalnum(ch))
     	{
-        	buffer[bufferCnt++] = ch;  // eshtm 3mar hna ++ b3d msh 2bl
+        	buffer[bufferCnt++] = ch; 
         	buffer[bufferCnt] = '\0';  // added this to modify the buffer dynamically
     	}
 
@@ -231,7 +232,7 @@ void check_all(){
         {
             checkKwdOrIdnt(buffer);
             bufferCnt = 0;
-            buffer[bufferCnt] = '\0';  // to check with it in the checkKwdOrIdnt for nulls
+            // buffer[bufferCnt] = '\0';  // to check with it in the checkKwdOrIdnt for nulls
         }
 
         if(ch=='\n'){
@@ -239,18 +240,20 @@ void check_all(){
         	l++;
 	    	pairs[k][l] = (struct pair){'\0', '\0'}; 
 	    	l=0;
-
 	    	// I will add this to exit when pressing enter in stdin mode to test the output of (pairs)
 	    	//break;
         }
         
 
     }
-    // printf("(%s): %s\n", pairs[0][0].label, pairs[0][0].value);
-    // int j;
-    // for (i = 0; i < 50; i++){
-    // 	for (j=0; j< 100; j++)
+
+    // int j=0;
+    // for (i = 0; i < 5; i++){
+    //     while(pairs[i][j].label != '\0'){
     // 		printf("%s: %s\n",  pairs[i][j].label, pairs[i][j].value);
+    //         j++;
+    //     }
+    //     j=0;
     // }
 }
 
