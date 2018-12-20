@@ -15,7 +15,7 @@ struct pair pairs[5][10];
 int k=0,l=0; // for the array of structs (pairs)
 int bufferCnt = 0; // Buffer Counter for concatenating chars and cutting them
 
-int isKeyword(char* buffer){
+int isKeyword(char buffer[]){
 
     // Samy Code of manipulating the keywords or adding some of them below .. ( PYTHON )
 
@@ -95,8 +95,6 @@ int isOp(char *c){
 char* return_path(){
     // Nassar Code of reading the path of the file and checking it's extension
     
-    /*  " WRITE YOUR CODE HERE && MODIFY THE ONE BELOW "  */
-
     FILE *fp;
     // Enter PATH of file which want to compile
     char PATH[100];
@@ -126,7 +124,7 @@ void init_io(FILE **fp, FILE *std, const char mode[], const char fn[]) {
     }
 }
 
-void checkKwdOrIdnt(char* buffer){
+void checkKwdOrIdnt(char buffer[]){
     if (buffer[0] == '\0'){}
     else if (isKeyword(buffer) == 1){
     	pairs[k][l] = (struct pair){"keyword","\0"};
@@ -142,7 +140,7 @@ void checkKwdOrIdnt(char* buffer){
     }
 }
 
-void checkOperators (char *ch, char* buffer){
+void checkOperators (char *ch, char buffer[]){
     
     int first = 0; // to catch the operators
     first = isOp(ch);
@@ -167,8 +165,6 @@ void checkOperators (char *ch, char* buffer){
                     op[1] = ch2;
                     pairs[k][l] = (struct pair){"double operator",""};  /// check with strcat()
                     strcpy(pairs[k][l].value, op);
-                    // label[l] = "double operator";
-                    // strcpy(value[l],op);
                     l++;
                     printf("%c%c is the double operator\n", *ch, ch2); // here we have the double operators
                 }
@@ -190,7 +186,7 @@ void checkOperators (char *ch, char* buffer){
 }
 
 
-void checkSpecial(char *ch, char* buffer){
+void checkSpecial(char *ch, char buffer[]){
     int i;
     char special[] = "[]{},.()\"\;:'?";
     for (i = 0; i < 13; ++i)
@@ -201,9 +197,8 @@ void checkSpecial(char *ch, char* buffer){
             {
             	bufferCnt = 0;
                 checkKwdOrIdnt(buffer);
-
             }
-            pairs[k][l] = (struct pair){"special character",*ch};
+            // pairs[k][l] = (struct pair){"special character",*ch};
             l++;
             printf("%c is special character\n", *ch);
         }
@@ -213,8 +208,8 @@ void checkSpecial(char *ch, char* buffer){
 
 void check_all(){
     char ch;
-    char* buffer; 
-    int i;      
+    char buffer[20]; 
+    int i;
     while ((ch = fgetc(source_fp)) != EOF)
     { 
 
@@ -232,7 +227,7 @@ void check_all(){
         {
             checkKwdOrIdnt(buffer);
             bufferCnt = 0;
-            // buffer[bufferCnt] = '\0';  // to check with it in the checkKwdOrIdnt for nulls
+            buffer[bufferCnt] = '\0';  // to check with it in the checkKwdOrIdnt for nulls
         }
 
         if(ch=='\n'){
@@ -247,14 +242,14 @@ void check_all(){
 
     }
 
-    // int j=0;
-    // for (i = 0; i < 5; i++){
-    //     while(pairs[i][j].label != '\0'){
-    // 		printf("%s: %s\n",  pairs[i][j].label, pairs[i][j].value);
-    //         j++;
-    //     }
-    //     j=0;
-    // }
+    int j=0;
+    for (i = 0; i < 5; i++){
+        while(pairs[i][j].label != '\0'){
+    		printf("%s: %s\n",  pairs[i][j].label, pairs[i][j].value);
+            j++;
+        }
+        j=0;
+    }
 }
 
 int main(int argc, char *argv[]){
